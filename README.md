@@ -21,7 +21,7 @@
       - [A. Clone the repository](#a-clone-the-repository)
       - [B. Install Dependencies](#b-install-dependencies)
       - [C. (Optional) Configuration](#c-optional-configuration)
-      - [D. Startup the Streamlit User Interface](#d-startup-the-streamlit-user-interface)
+      - [D. Start the Streamlit User Interface](#d-start-the-streamlit-user-interface)
   - [Contributing](#contributing)
 
 ## Architecture
@@ -93,7 +93,7 @@ DEBUG = <True to turn on the debug mode>
 - `MAX_HISTORY`: Do not set this too low, as it may make the agent forgetful.
 - `DEBUG`: If set `True`, you could view the thinking process on the streamlit UI.
 
-#### D. Startup the Streamlit User Interface
+#### D. Start the Streamlit User Interface
 ```bash
 streamlit run ./main_st.py
 ```
