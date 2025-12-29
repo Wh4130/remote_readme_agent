@@ -2,13 +2,16 @@
 from agents.manager import manager_agent
 
 # TODO Import sub-agents from agents folder
-from agents.file_management_agent import file_management_agent
+from agents.writer_agent import writer_agent
 from agents.web_search_agent import web_search_agent
 from agents.db_manager_agent import google_sheet_agent
 
 # Import necessary components
 from components.game import ActionContext, Goal, Action, ActionRegistry, Memory
 from components.frame import AgentRegistry, Agent
+
+# Import utilities
+from utils_st import stream_data, render_global_memory
 
 # Configuration
 # variables with all capital letters are constants in the config file 
@@ -19,14 +22,12 @@ import time, json
 from dotenv import dotenv_values
 
 
-def stream_data(msg):
-    for word in msg.split(" "):
-        yield word + " "
-        time.sleep(0.02)
+if "global_memory" not in st.session_state:
+        st.session_state["global_memory"] = []
 
 # TODO 1. Construct Agent Registry and register all sub-agents
 registry = AgentRegistry()
-registry.register_agent(file_management_agent.name, file_management_agent.run)
+registry.register_agent(writer_agent.name, writer_agent.run)
 registry.register_agent(web_search_agent.name, web_search_agent.run)
 registry.register_agent(google_sheet_agent.name, google_sheet_agent.run)
 
@@ -45,9 +46,31 @@ action_context = ActionContext(agent_registry = registry,
 # 3. Main function for chat session
 def main():
     
-    st.title("AI Agent")
+    st.title("README.md Writer Agent")
 
- 
+    st.caption("A multi-agent system that analyzes a remote git repository and writes a README.md file. Start using it by pasting a :blue[**public remote github repository url.**]")
+
+    with st.sidebar:
+        with st.container(border = True):
+
+            st.write("**Analyze Global Memory**")
+            st.caption(":red[Clicking this button will interrupt any running session.]")
+            if st.button("Click to open", width = "stretch"):
+                render_global_memory()
+
+            st.write("**Most Recent Result**")
+            if "README" in st.session_state:
+                st.download_button(
+                    label = "README.md",
+                    data = st.session_state.README,
+                    file_name = "README.md",
+                    icon = ":material/download:",
+                    width = "stretch",
+                    key = f"{time.time()}"
+                )
+            else:
+                st.warning("No result yet.")
+                
 
     # 1. Initialization session state for shared memory
     if "shared_memory" not in st.session_state:
@@ -56,9 +79,9 @@ def main():
     
     # 2. Introduction message 
     if st.session_state.shared_memory.get_memories() == []:
-        intro_message = "Hello! I am your project manager agent. How can I assist you today?"
+        intro_message = "Hello! Paste a **remote github repository url** to analyze. Please make sure that the repository is **public accessible.**"
         with st.chat_message("assistant"):
-            st.info(intro_message)
+            st.success(intro_message)
 
     # 3. History messages display: st.chat_message
     for msg in st.session_state.shared_memory.get_memories():
@@ -91,6 +114,7 @@ def main():
                         debug=DEBUG,
                         ui_option=action_context.ui_option
                     )
+
                 
                 
             # Get last assistant message
@@ -100,6 +124,10 @@ def main():
                     last_msg = item.get("content")
                     break
             st.write_stream(stream_data(last_msg))
+
+
+        st.rerun()
+
 
 if __name__ == "__main__":
     main()

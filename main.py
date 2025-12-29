@@ -2,7 +2,7 @@
 from agents.manager import manager_agent
 
 # TODO Import sub-agents from agents folder
-from agents.agent import file_management_agent
+from agents.writer_agent import writer_agent
 
 # Import necessary components
 from components.game import ActionContext, Goal, Action, ActionRegistry, Memory
@@ -16,7 +16,7 @@ from config import *
 
 # TODO 1. Construct Agent Registry and register all sub-agents
 registry = AgentRegistry()
-registry.register_agent("agent_template", file_management_agent.run)
+# registry.register_agent("agent_template", file_management_agent.run)
 
 
 # 2. Construct ActionContext instance

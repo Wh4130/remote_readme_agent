@@ -33,7 +33,7 @@ def get_cwd(action_context, *args, **kwargs):
 @public_tools_registry.register_tool(
     tool_name="save_content_to_file",
     description="Save content to a file. You need to provide the content to be saved and the file path with correct extension..",
-    tags = ["file_operations"])
+    tags = ["file_operations", "IO_save"])
 def save_content_to_file(action_context, content, file_path, *args, **kwargs):
     with open(file_path, "w") as f:
         f.write(content)

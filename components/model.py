@@ -15,7 +15,7 @@ def generate_response(prompt: Prompt):
     response = completion(
         model="cerebras/gpt-oss-120b",
         messages=prompt.messages,
-        max_tokens=30000,
+        max_tokens=50000,
         tools=prompt.tools if prompt.tools else None # 確保沒有工具時傳 None
     )
     

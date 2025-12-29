@@ -18,11 +18,15 @@ agent file structure:
 
 # ----------------------------------------------------------
 # * Initialization
-tags = ["file_operations"]            # specify tags for this agent to filter public tools
+tags = []            # specify tags for this agent to filter public tools
+SYSTEM_PROMPTS = [
+    "You are a professional writer, who is especially adept at writing technical articles. Your task is to write an article in the specified form.",
+    "Be concise and to the point. Use relevant language and tone."
+]
 
 action_registry = ActionRegistry()
 goals = [
-    Goal("You are a secretary manager. You can perform various file operations and web scraping tasks  based on user requests."),
+    Goal(prompt) for prompt in SYSTEM_PROMPTS
 ]
 language = AgentFunctionCallingActionLanguage()
 environment = Environment()
@@ -35,11 +39,11 @@ environment = Environment()
 
 # ----------------------------------------------------------
 # * Register Public Tools
-for public_action in public_tools_registry.get_actions(tags):
-    action_registry.register(public_action)
+# for public_action in public_tools_registry.get_actions(tags):
+#     action_registry.register(public_action)
 
 
 
 # ----------------------------------------------------------
 # * Agent Creation
-file_management_agent = Agent("file_management_agent", goals, language, action_registry, generate_response, environment)
+writer_agent = Agent("writer_agent", goals, language, action_registry, generate_response, environment)

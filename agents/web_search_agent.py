@@ -80,10 +80,10 @@ def google_search(action_context, search_keyword, num_results, *args, **kwargs):
     description="Scan a git repository fully, excluding certain directories and file types, and return the content of the files and the directory structure.",)
 def enhanced_full_scanner_tool(action_context, repo_url, *args, **kwargs):
     """
-    全量掃描工具：
-    1. 排除特定目錄與副檔名 (非程式碼/大檔案)
-    2. 遞迴讀取所有剩餘檔案
-    3. 每個檔案限制 2500 字，避免 Context 爆炸
+    scanner tool：
+    1. exclude specific directories and extensions.
+    2. load non-excluded files and concateneate contents to the report object
+    3. content of each file is limited to 5000 words
     """
     tmp_dir = tempfile.mkdtemp(prefix="full_repo_scan_")
     report = []
@@ -101,7 +101,7 @@ def enhanced_full_scanner_tool(action_context, repo_url, *args, **kwargs):
     }
 
     try:
-        # 1. 快速 Clone
+        # 1. clone the git repo
         subprocess.run(
             ["git", "clone", "--depth", "1", repo_url, tmp_dir],
             check=True, capture_output=True, text=True
@@ -127,26 +127,26 @@ def enhanced_full_scanner_tool(action_context, repo_url, *args, **kwargs):
                 report.append(f"\n--- FILE: {rel_path} ---")
                 
                 try:
-                    # 4. 讀取內容，最多 2500 字
+                    # 4. read contents
                     with open(file_path, 'r', encoding='utf-8', errors='ignore') as content_file:
-                        content = content_file.read(2500)
+                        content = content_file.read(5000)
                         if not content.strip():
                             report.append("[Empty File]")
                         else:
                             report.append(content)
                             if len(content) >= 2500:
-                                report.append("\n[...內容過長，已截斷至 2500 字...]")
+                                report.append("\n[...CONTENT IS TOO LENGTHY. SLICED TO 5000 WORDS...]")
                 except Exception as e:
-                    report.append(f"[無法讀取內容: {str(e)}]")
+                    report.append(f"[UNABLE TO READ FILE: {str(e)}]")
                 
                 report.append("-" * 40)
 
         return "\n".join(report)
 
     except Exception as e:
-        return f"掃描失敗: {str(e)}"
+        return f"FAILED TO SCAN THE REPO: {str(e)}"
     finally:
-        # 務必清理
+        # Clean the temporary directory
         shutil.rmtree(tmp_dir)
 
 # ----------------------------------------------------------

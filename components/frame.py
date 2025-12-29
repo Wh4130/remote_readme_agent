@@ -1,6 +1,8 @@
 from components.game import Goal, Prompt, Action, ActionRegistry, Memory, Environment, AgentFunctionCallingActionLanguage, ActionContext
+from utils_st import add_global_memory
 
 import json
+import time
 import streamlit as st
 from typing import List, Callable, Dict, Any, Tuple, Optional
  
@@ -63,7 +65,11 @@ class Agent:
 
     def set_current_task(self, memory: Memory, task: str):
         """Inject the user's initial request into memory"""
-        memory.add_memory({"type": "user", "content": task})
+        memory.add_memory({"role": "user", "content": task})
+
+    def set_current_task_global(self, content: str):
+        """update the task to global memories"""
+        add_global_memory(self.name, {"role": "user", "content": content, "time": f"{time.time()}"})
 
     def update_memory(self, memory: Memory, response: Any, result: dict):
         # 此時的 response 是 Message 物件
@@ -77,6 +83,25 @@ class Agent:
 
         memory.add_memory(assistant_mem)
         memory.add_memory({"role": "user", "content": json.dumps(result)})
+
+    def update_memory_global(self, result: dict | Any, role: str):
+        assert role in ['user', 'assistant'], "role must be 'user' or 'assistant'"
+        if role == "assistant":
+            assistant_mem = {
+                "role": role,
+                "content": result.content or "",
+                "time": f"{time.time()}"
+            }
+            if hasattr(result, 'tool_calls') and result.tool_calls:
+                assistant_mem["tool_calls"] = result.tool_calls
+
+            add_global_memory(self.name, assistant_mem)
+        else:
+            add_global_memory(self.name, {"role": role, 
+                                          "content": json.dumps(result),
+                                          "time": f"{time.time()}"})
+
+    
 
     def prompt_llm_for_action(self, full_prompt: Prompt) -> str:
         """Call the provided LLM function"""
@@ -97,6 +122,7 @@ class Agent:
         # set up memory
         memory = memory or Memory()
         self.set_current_task(memory, user_input)
+        self.set_current_task_global(user_input)
 
         # dynamically modify the description of 'call_agent' tool (for manager agent) if exists
         registry, call_agent_tool = None, None
@@ -115,8 +141,9 @@ class Agent:
                 self.debugging(ui_option, f">({self.name}) Agent thinking...\n")
                 
 
-            # 2. Generate a response from the agent
+            # 2. Generate a response from the agent and update the result to global
             response = self.prompt_llm_for_action(prompt)
+            self.update_memory_global(response, role = "assistant")
             if debug:
                 self.debugging(ui_option, f">({self.name}) Agent Decision: {response}\n")
 
@@ -144,6 +171,7 @@ class Agent:
 
             # 5. Update the agent's memory with information about what happened
             self.update_memory(memory, response, result)
+            self.update_memory_global(result, role = "user")
 
             # 6. Check if the agent has decided to terminate
             if self.should_terminate(response):
