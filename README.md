@@ -40,7 +40,7 @@ This project is constructed based on the multi-agent structure. Specifically:
 - There are **sub-agents** that possesses independent memory with any other agents. In this application, there is only one sub-agent (the `web_search_agent`).
 - The manager agent invokes other agents by its exclusive tool: `call_agent`.
 ```mermaid
-flowchart LR
+flowchart TD
 U(((User)))
 subgraph Main ["Main Agent Loop"]
     Manager([Manager Agent])
