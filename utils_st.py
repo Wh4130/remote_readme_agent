@@ -49,20 +49,23 @@ def add_global_memory(agent_name, memory):
 
 @st.dialog("Global Memory", width = "large")
 def render_global_memory():
-    df = pd.DataFrame(st.session_state['global_memory'])
-    df['time'] = df['time'].apply(lambda x: dt.datetime.fromtimestamp(float(x)).strftime("%Y-%m-%d %H:%M:%S"))
+    if not st.session_state['global_memory']:
+        st.warning("No memory yet!")
+    else:
+        df = pd.DataFrame(st.session_state['global_memory'])
+        # df['time'] = df['time'].apply(lambda x: dt.datetime.fromtimestamp(float(x)).strftime("%Y-%m-%d %H:%M:%S"))
 
-    LEFT, RIGHT = st.columns((0.2, 0.8))
-    with LEFT:
-        agent = st.selectbox("Agent filter", ['all'] + df['agent_session'].unique().tolist(), index = 0)
-        mode  = st.pills("Render mode", ["raw", "concise"], default = "concise")
+        LEFT, RIGHT = st.columns((0.2, 0.8))
+        with LEFT:
+            agent = st.selectbox("Agent filter", ['all'] + df['agent_session'].unique().tolist(), index = 0)
+            mode  = st.pills("Render mode", ["raw", "concise"], default = "concise")
 
-    with RIGHT:
-        if agent != "all":
-            df = df[df['agent_session'] == agent]
+        with RIGHT:
+            if agent != "all":
+                df = df[df['agent_session'] == agent]
 
-        if mode == "concise":
-            df['content'] = df['content'].apply(lambda x: format_message(x))
-            df['tool_calls'] = df['tool_calls'].apply(lambda x: format_tool_calls(x))
+            if mode == "concise":
+                df['content'] = df['content'].apply(lambda x: format_message(x))
+                df['tool_calls'] = df['tool_calls'].apply(lambda x: format_tool_calls(x))
 
-        st.dataframe(df.sort_values(by = "time", ascending = True))
+            st.dataframe(df.sort_values(by = "time", ascending = True))

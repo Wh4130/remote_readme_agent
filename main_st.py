@@ -27,7 +27,7 @@ if "global_memory" not in st.session_state:
 
 # TODO 1. Construct Agent Registry and register all sub-agents
 registry = AgentRegistry()
-registry.register_agent(writer_agent.name, writer_agent.run)
+# registry.register_agent(writer_agent.name, writer_agent.run)
 registry.register_agent(web_search_agent.name, web_search_agent.run)
 registry.register_agent(google_sheet_agent.name, google_sheet_agent.run)
 
@@ -52,6 +52,8 @@ def main():
 
     with st.sidebar:
         with st.container(border = True):
+            st.write("**Sub-agent List**")
+            st.dataframe(registry.agents.keys())
 
             st.write("**Analyze Global Memory**")
             st.caption(":red[Clicking this button will interrupt any running session.]")

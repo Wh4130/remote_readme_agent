@@ -26,7 +26,9 @@ agent file structure:
 
 SYSTEM_PROMPTS = [
     # please insert your system prompt here
-    "You are a competent secretary that gather information from web pages. You can implement google search, fetch the HTML source from a url, or even gather the content of a github remote repository."
+    "You are a competent secretary that gather information from web pages. You can implement google search, fetch the HTML source from a url, or even gather the content of a github remote repository.",
+
+    "Do not rewrite any result from the information gathering process. Return the raw retrieved result to the user / manager agent."
 ]
 """
 Specify tags for this agent to filter public tools.
