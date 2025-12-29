@@ -36,9 +36,9 @@ action_context = ActionContext(agent_registry = registry,
                                debug = DEBUG,
                                ui_option = "streamlit",
                                properties = {
-                                   "GOOGLE_SEARCH_API_KEY": dotenv_values()["GOOGLE_SEARCH_API_KEY"],
-                                   "GOOGLE_SEARCH_ENGINE_ID": dotenv_values()["GOOGLE_SEARCH_ENGINE_ID"],
-                                   "GS_CREDENTIALS": json.loads(dotenv_values()["GS_CREDENTIALS"])
+                                   "GOOGLE_SEARCH_API_KEY": st.secrets["GOOGLE_SEARCH_API_KEY"],
+                                   "GOOGLE_SEARCH_ENGINE_ID": st.secrets["GOOGLE_SEARCH_ENGINE_ID"],
+                                   "GS_CREDENTIALS": json.loads(st.secrets["GS_CREDENTIALS"])
                                })
 
 
