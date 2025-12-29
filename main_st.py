@@ -46,21 +46,24 @@ action_context = ActionContext(agent_registry = registry,
 # 3. Main function for chat session
 def main():
     
-    st.title("README.md Writer Agent")
-
-    st.caption("A multi-agent system that analyzes a remote git repository and writes a README.md file. Start using it by pasting a :blue[**public remote github repository url.**]")
+    st.title("README Writer Agent")
 
     with st.sidebar:
+        st.header("README Writer Agent")
+        st.caption("A multi-agent system that analyzes a remote git repository and writes a README.md file. Start using it by pasting a :blue[**public remote github repository url.**]")
+        st.logo("assets/icon.png", size = 'large')
+        st.divider()
         with st.container(border = True):
-            st.write("**Sub-agent List**")
+            
+            st.write(":material/support_agent: **Sub-agent List**")
             st.dataframe(registry.agents.keys())
 
-            st.write("**Analyze Global Memory**")
+            st.write(":material/memory: **Analyze Global Memory**")
             st.caption(":red[Clicking this button will interrupt any running session.]")
             if st.button("Click to open", width = "stretch"):
                 render_global_memory()
 
-            st.write("**Most Recent Result**")
+            st.write(":material/output_circle: **Most Recent Result**")
             if "README" in st.session_state:
                 st.download_button(
                     label = "README.md",
@@ -126,9 +129,19 @@ def main():
                     last_msg = item.get("content")
                     break
             st.write_stream(stream_data(last_msg))
+            if "README" in st.session_state:
+                st.markdown(st.session_state['README'])
+                st.session_state.shared_memory.add_memory({
+                    "role": "assistant", "content": st.session_state['README']
+                })
+                st.session_state.global_memory.append({
+                    "agent_session": manager_agent.name,
+                    "role": "assistant", "content": st.session_state['README']
+                })
 
 
         st.rerun()
+
 
 
 if __name__ == "__main__":

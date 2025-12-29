@@ -22,7 +22,7 @@ def format_message(message):
         return 
 
 def format_tool_calls(messages):
-    if not messages:
+    if not isinstance(messages, list):
         return 
     value = ""
     for message in messages:
