@@ -3,3 +3,4 @@ streamlit
 python-dotenv
 oauth2client
 streamlit
+litellm
