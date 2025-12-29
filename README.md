@@ -1,8 +1,11 @@
 # README Writer Agent
 
-A README.md compiler agent based on a multi-agent system with **GAME** architecture. 
-
-Simply paste in your public github repository url, the agent will automatically generate the `README.md` for you. You could also use this tool to simply explore a repository. 
+> A README.md compiler agent based on a multi-agent system with **GAME** architecture. 
+> Simply paste in your public github repository url, the agent will automatically generate the `README.md` for you. You could also use this tool to simply explore a repository. 
+> 
+> Access our Application:
+> 
+> 📌 [README Writer Agent on Streamlit](https://readme-compile-agent.streamlit.app/)
 
 
 ## Table of Contents
@@ -37,7 +40,7 @@ This project is constructed based on the multi-agent structure. Specifically:
 - There are **sub-agents** that possesses independent memory with any other agents. In this application, there is only one sub-agent (the `web_search_agent`).
 - The manager agent invokes other agents by its exclusive tool: `call_agent`.
 ```mermaid
-flowchart TD
+flowchart LR
 U(((User)))
 subgraph Main ["Main Agent Loop"]
     Manager([Manager Agent])
