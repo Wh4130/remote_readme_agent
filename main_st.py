@@ -23,7 +23,18 @@ import time, json
 from dotenv import dotenv_values
 
 
-st.title("README Writer Agent")
+st.set_page_config(page_title = "README Writer Agent", 
+                   page_icon = ":material/text_fields:", 
+                   layout="wide", 
+                   initial_sidebar_state = "auto", 
+                   menu_items={
+        'Get Help': None,
+        'Report a bug': "mailto:huang0jin@gmail.com",
+        'About': """
+- Developed by - **[Wally, Huang Lin Chun](https://antique-turn-ad4.notion.site/Wally-Huang-Lin-Chun-182965318fa7804c86bdde557fa376f4)**"""
+    })
+
+
 
 if "global_memory" not in st.session_state:
     st.session_state["global_memory"] = []
@@ -51,6 +62,7 @@ action_context = ActionContext(agent_registry = registry,
 # 3. Main function for chat session
 def main():
 
+    st.title("README Writer Agent")
 
     render_sidebar(registry)
 
