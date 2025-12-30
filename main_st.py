@@ -32,7 +32,7 @@ if "running" not in st.session_state:
 registry = AgentRegistry()
 # registry.register_agent(writer_agent.name, writer_agent.run)
 registry.register_agent(web_search_agent.name, web_search_agent)
-registry.register_agent(google_sheet_agent.name, google_sheet_agent)
+# registry.register_agent(google_sheet_agent.name, google_sheet_agent)
 
 # 2. Construct ActionContext instance
 # Note: This is where the Registry is actually passed in
