@@ -23,6 +23,8 @@ import time, json
 from dotenv import dotenv_values
 
 
+st.title("README Writer Agent")
+
 if "global_memory" not in st.session_state:
     st.session_state["global_memory"] = []
 if "running" not in st.session_state:
@@ -48,13 +50,11 @@ action_context = ActionContext(agent_registry = registry,
 
 # 3. Main function for chat session
 def main():
-    
-    st.title("README Writer Agent")
+
 
     render_sidebar(registry)
 
-            
-                
+        
 
     # 1. Initialization session state for shared memory
     if "shared_memory" not in st.session_state:
