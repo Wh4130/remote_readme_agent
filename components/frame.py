@@ -184,13 +184,18 @@ class AgentRegistry:
     def __init__(self):
         self.agents = {}
         
-    def register_agent(self, name: str, run_function: Callable):
+    def register_agent(self, name: str, agent_object: Agent):
         """Register an agent's run function."""
-        self.agents[name] = run_function
+        self.agents[name] = agent_object
         
     def get_agent(self, name: str) -> Callable:
         """Get an agent's run function by name."""
-        return self.agents.get(name)
+        return self.agents.get(name).run
+    
+    def get_agent_tool_registry(self, name: str) -> List:
+        """Get all tools available to the agent"""
+        return list(self.agents.get(name).actions.actions.keys())
+
 
 
 

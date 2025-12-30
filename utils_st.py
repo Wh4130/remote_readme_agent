@@ -53,7 +53,7 @@ def render_global_memory():
         st.warning("No memory yet!")
     else:
         df = pd.DataFrame(st.session_state['global_memory'])
-        # df['time'] = df['time'].apply(lambda x: dt.datetime.fromtimestamp(float(x)).strftime("%Y-%m-%d %H:%M:%S"))
+        df['time_on_display'] = df['time'].apply(lambda x: dt.datetime.fromtimestamp(float(x)).strftime("%Y-%m-%d %H:%M:%S"))
 
         LEFT, RIGHT = st.columns((0.2, 0.8))
         with LEFT:
@@ -68,4 +68,53 @@ def render_global_memory():
                 df['content'] = df['content'].apply(lambda x: format_message(x))
                 df['tool_calls'] = df['tool_calls'].apply(lambda x: format_tool_calls(x))
 
-            st.dataframe(df.sort_values(by = "time", ascending = True))
+            st.dataframe(df.sort_values(by = "time", ascending = True),
+                column_config = {
+                    "time": None
+                }
+            )
+
+def render_sidebar(agent_registry):
+    """
+    Render a streamlit sidebar
+    
+    :param agent_registry: the AgentRegistry object
+    """
+    with st.sidebar:
+        st.header("README Writer Agent")
+        st.caption("A multi-agent system that analyzes a remote git repository and writes a README.md file. Start using it by pasting a :blue[**public remote github repository url.**]")
+        st.logo("assets/icon.png", size = 'large')
+
+        st.subheader(":material/output_circle: **Most Recent Result**")
+        with st.container(border = True):
+            if "README" in st.session_state:
+                st.download_button(
+                    label = "README.md",
+                    data = st.session_state.README,
+                    file_name = "README.md",
+                    icon = ":material/download:",
+                    width = "stretch",
+                    key = f"{time.time()}"
+                )
+            else:
+                st.warning("No result yet.")
+
+        st.subheader(":material/support_agent: **Sub-agent List**",
+                         help = "expand the toggle list to see tools available to each agent.")
+        with st.container(border = True, height = 120):
+            for agent in agent_registry.agents.keys():
+                with st.expander(agent):
+                    text = "\n"
+                    for tool in agent_registry.get_agent_tool_registry(agent):
+                        text += f"> {tool}\n"
+                    st.write(f"```{text}```")
+
+
+        st.subheader(":material/memory: **Analyze Global Memory**")
+        with st.container(border = True):
+            st.caption(":red[Clicking this button will interrupt any running session.]")
+            if st.button("Click to open", width = "stretch"):
+                render_global_memory()
+
+            "Other sidebar design components go here"
+        

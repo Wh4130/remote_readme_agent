@@ -11,7 +11,7 @@ from components.game import ActionContext, Goal, Action, ActionRegistry, Memory
 from components.frame import AgentRegistry, Agent
 
 # Import utilities
-from utils_st import stream_data, render_global_memory
+from utils_st import stream_data, render_sidebar
 
 # Configuration
 # variables with all capital letters are constants in the config file 
@@ -28,8 +28,8 @@ if "global_memory" not in st.session_state:
 # TODO 1. Construct Agent Registry and register all sub-agents
 registry = AgentRegistry()
 # registry.register_agent(writer_agent.name, writer_agent.run)
-registry.register_agent(web_search_agent.name, web_search_agent.run)
-registry.register_agent(google_sheet_agent.name, google_sheet_agent.run)
+registry.register_agent(web_search_agent.name, web_search_agent)
+registry.register_agent(google_sheet_agent.name, google_sheet_agent)
 
 # 2. Construct ActionContext instance
 # Note: This is where the Registry is actually passed in
@@ -48,33 +48,9 @@ def main():
     
     st.title("README Writer Agent")
 
-    with st.sidebar:
-        st.header("README Writer Agent")
-        st.caption("A multi-agent system that analyzes a remote git repository and writes a README.md file. Start using it by pasting a :blue[**public remote github repository url.**]")
-        st.logo("assets/icon.png", size = 'large')
-        st.divider()
-        with st.container(border = True):
+    render_sidebar(registry)
+
             
-            st.write(":material/support_agent: **Sub-agent List**")
-            st.dataframe(registry.agents.keys())
-
-            st.write(":material/memory: **Analyze Global Memory**")
-            st.caption(":red[Clicking this button will interrupt any running session.]")
-            if st.button("Click to open", width = "stretch"):
-                render_global_memory()
-
-            st.write(":material/output_circle: **Most Recent Result**")
-            if "README" in st.session_state:
-                st.download_button(
-                    label = "README.md",
-                    data = st.session_state.README,
-                    file_name = "README.md",
-                    icon = ":material/download:",
-                    width = "stretch",
-                    key = f"{time.time()}"
-                )
-            else:
-                st.warning("No result yet.")
                 
 
     # 1. Initialization session state for shared memory
