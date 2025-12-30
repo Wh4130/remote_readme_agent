@@ -11,7 +11,8 @@ from components.game import ActionContext, Goal, Action, ActionRegistry, Memory
 from components.frame import AgentRegistry, Agent
 
 # Import utilities
-from utils_st import stream_data, render_sidebar
+from utils_st import stream_data, render_sidebar, set_session_running, handle_running_session
+
 
 # Configuration
 # variables with all capital letters are constants in the config file 
@@ -23,7 +24,9 @@ from dotenv import dotenv_values
 
 
 if "global_memory" not in st.session_state:
-        st.session_state["global_memory"] = []
+    st.session_state["global_memory"] = []
+if "running" not in st.session_state:
+    st.session_state['running'] = False
 
 # TODO 1. Construct Agent Registry and register all sub-agents
 registry = AgentRegistry()
@@ -84,39 +87,41 @@ def main():
 
         # 4. Call the agent. Update the shared_memory whenever there's a new response
         with st.chat_message("assistant"):
-            with st.spinner("Agent Thinking..."):
-                context_manager = st.expander("Expand to see the thinking process") if DEBUG else st.container()
-                with context_manager:
-                    # Update shared memory
-                    st.session_state.shared_memory = manager_agent.run(
-                        user_query, 
-                        memory=st.session_state.shared_memory, 
-                        action_context=action_context, 
-                        debug=DEBUG,
-                        ui_option=action_context.ui_option
-                    )
 
-                
-                
-            # Get last assistant message
-            last_msg = "Error. Failed to get response."
-            for item in reversed(st.session_state.shared_memory.get_memories()):
-                if (item.get("role") == "assistant") and (item.get("content")):
-                    last_msg = item.get("content")
-                    break
-            st.write_stream(stream_data(last_msg))
-            if "README" in st.session_state:
-                st.markdown(st.session_state['README'])
-                st.session_state.shared_memory.add_memory({
-                    "role": "assistant", "content": st.session_state['README']
-                })
-                st.session_state.global_memory.append({
-                    "agent_session": manager_agent.name,
-                    "role": "assistant", "content": st.session_state['README']
-                })
+            @handle_running_session
+            def agent_running():
+                with st.spinner("Agent Thinking..."):
+                    context_manager = st.expander("Expand to see the thinking process") if DEBUG else st.container()
+                    with context_manager:
+                        # Update shared memory
+                        st.session_state.shared_memory = manager_agent.run(
+                            user_query, 
+                            memory=st.session_state.shared_memory, 
+                            action_context=action_context, 
+                            debug=DEBUG,
+                            ui_option=action_context.ui_option
+                        )
+                    
+                    
+                # Get last assistant message
+                last_msg = "Error. Failed to get response."
+                for item in reversed(st.session_state.shared_memory.get_memories()):
+                    if (item.get("role") == "assistant") and (item.get("content")):
+                        last_msg = item.get("content")
+                        break
+                st.write_stream(stream_data(last_msg))
+                if "README" in st.session_state:
+                    st.markdown(st.session_state['README'])
+                    st.session_state.shared_memory.add_memory({
+                        "role": "assistant", "content": st.session_state['README']
+                    })
+                    st.session_state.global_memory.append({
+                        "agent_session": manager_agent.name,
+                        "role": "assistant", "content": st.session_state['README']
+                    })
 
-
-        st.rerun()
+            agent_running()
+            st.rerun()
 
 
 

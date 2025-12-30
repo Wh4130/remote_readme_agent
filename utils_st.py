@@ -94,7 +94,8 @@ def render_sidebar(agent_registry):
                     file_name = "README.md",
                     icon = ":material/download:",
                     width = "stretch",
-                    key = f"{time.time()}"
+                    key = f"{time.time()}",
+                    disabled = st.session_state['running']
                 )
             else:
                 st.warning("No result yet.")
@@ -113,8 +114,21 @@ def render_sidebar(agent_registry):
         st.subheader(":material/memory: **Analyze Global Memory**")
         with st.container(border = True):
             st.caption(":red[Clicking this button will interrupt any running session.]")
-            if st.button("Click to open", width = "stretch"):
+            if st.button("Click to open", width = "stretch", disabled = st.session_state['running']):
                 render_global_memory()
 
             "Other sidebar design components go here"
         
+def handle_running_session(func):
+    def wrapper():
+        if "running" not in st.session_state:
+            st.session_state['running'] = True 
+        st.session_state['running'] = True
+        func()
+        st.session_state['running'] = False 
+    return wrapper
+
+def set_session_running():
+    if "running" not in st.session_state:
+        st.session_state['running'] = True 
+    st.session_state['running'] = True
