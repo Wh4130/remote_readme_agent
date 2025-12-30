@@ -11,7 +11,7 @@ from components.game import ActionContext, Goal, Action, ActionRegistry, Memory
 from components.frame import AgentRegistry, Agent
 
 # Import utilities
-from utils_st import stream_data, render_sidebar, handle_running_session
+from utils_st import stream_data, render_sidebar, handle_running_session, set_session_running
 
 
 # Configuration
@@ -80,7 +80,7 @@ def main():
                     st.markdown(msg["content"])
 
     # 4. User input
-    if user_query := st.chat_input("Assign a job..."):
+    if user_query := st.chat_input("Assign a job...", on_submit = set_session_running):
         
         with st.chat_message("user"):
             st.markdown(user_query)
