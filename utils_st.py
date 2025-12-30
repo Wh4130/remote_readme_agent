@@ -102,7 +102,7 @@ def render_sidebar(agent_registry):
 
         st.subheader(":material/support_agent: **Sub-agent List**",
                          help = "expand the toggle list to see tools available to each agent.")
-        with st.container(border = True, height = 120):
+        with st.container(border = True):
             for agent in agent_registry.agents.keys():
                 with st.expander(agent):
                     text = "\n"
