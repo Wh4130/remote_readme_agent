@@ -11,7 +11,7 @@ from components.game import ActionContext, Goal, Action, ActionRegistry, Memory
 from components.frame import AgentRegistry, Agent
 
 # Import utilities
-from utils_st import stream_data, render_sidebar, set_session_running, handle_running_session
+from utils_st import stream_data, render_sidebar, handle_running_session
 
 
 # Configuration
