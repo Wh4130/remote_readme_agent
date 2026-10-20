@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-os.environ["CEREBRAS_API_KEY"] = os.getenv("CEREBRAS_API_KEY")
+os.environ["OPENROUTER_API_KEY"] = os.getenv("OPENROUTER_API_KEY")
 
 
 def generate_response(prompt: Prompt):
@@ -13,9 +13,9 @@ def generate_response(prompt: Prompt):
     Call LLM and return message that contents both tool usage and chat content
     """
     response = completion(
-        model="cerebras/gpt-oss-120b",
+        model="openrouter/minimax/minimax-m3.1-flash:free",
         messages=prompt.messages,
-        max_tokens=50000,
+        max_tokens=4000,
         tools=prompt.tools if prompt.tools else None # 確保沒有工具時傳 None
     )
     
