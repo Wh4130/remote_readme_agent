@@ -1,0 +1,9 @@
+beautifulsoup4
+gspread
+litellm
+mcp
+oauth2client
+pandas
+python-dotenv
+requests
+streamlit
