@@ -1,0 +1,17 @@
+[project]
+name = "remote-readme-agent"
+version = "0.1.0"
+description = "A README.md compiler agent based on a multi-agent system with GAME architecture"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "beautifulsoup4",
+    "gspread",
+    "litellm",
+    "mcp",
+    "oauth2client",
+    "pandas",
+    "python-dotenv",
+    "requests",
+    "streamlit",
+]
